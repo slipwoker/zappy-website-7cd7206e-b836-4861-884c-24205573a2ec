@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Interactive Engineering Projects Showcase — [User&#39;s Name]</title>
+    <meta name="description" content="Dive into hands-on mechanical engineering portfolio projects with interactive demos. Each build tells a story of problem-solving, design iteration, and technical mastery.">
+    <meta name="keywords" content="mechanical engineering portfolio, engineering projects showcase, interactive project demos, electrical engineering portfolio example, technical project portfolio">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '7cd7206e-b836-4861-884c-24205573a2ec',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="Interactive Engineering Projects Showcase — [User's Name]">
+  <meta property="og:description" content="Dive into hands-on mechanical engineering portfolio projects with interactive demos. Each build tells a story of problem-solving, design iteration, and technical mastery.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Interactive Engineering Projects Showcase — [User's Name]">
+  <meta name="twitter:description" content="Dive into hands-on mechanical engineering portfolio projects with interactive demos. Each build tells a story of problem-solving, design iteration, and technical mastery.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: #333 !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))), .sub-menu:not(:has(li)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .sub-menu.mobile-expanded { max-height: 500px !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-dark) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-dark) !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-dark) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      #mic-access-tool-general-button, .mic-access-tool-general-button,
+      #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+      ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+      #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewbox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" style="display:none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  
+  <button class="phone-header-btn" aria-label="Call">
+    <svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+  
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/user-s-name-engineering-logo.webp" alt="[User&#39;s Name]" class="logo">
+      </a>
+    </div>
+    
+    <ul class="nav-menu" id="navMenu"><li><a href="/projects">Projects</a></li><li><a href="/about">About</a></li></ul>
+    
+    <div class="nav-cta-container">
+      <a href="/contact" class="nav-cta-btn">Contact</a>
+    </div>
+  </div>
+</nav>
+  
+  <main>
+    <section class="projects-intro-section" data-layout-spec="Projects-intro">
+  <div class="projects-intro-container">
+    <div class="projects-intro-content">
+      <h1>Projects</h1>
+      <p>Every build here represents a cycle of constraints, iteration, and validation. I approach engineering like prototyping in a workshop—start with a question, test assumptions early, refine through feedback, and document what worked (and what didn't). This portfolio captures that process: real problems, thoughtful solutions, and the messy learning in between.</p>
+      <div class="projects-intro-specialties">
+        <span>Mechanical Design</span>
+        <span class="projects-intro-dot">•</span>
+        <span>Embedded Systems</span>
+        <span class="projects-intro-dot">•</span>
+        <span>Rapid Prototyping</span>
+        <span class="projects-intro-dot">•</span>
+        <span>Process Validation</span>
+      </div>
+      <h3>Most recent builds</h3>
+    </div>
+  </div>
+  <div class="projects-intro-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 60" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="projects-intro-fold">
+          <path d="M0,60 L0,0 L1180,0 L1200,20 L1200,60 Z"></path>
+        </clipPath>
+      </defs>
+      <rect width="1200" height="60" fill="var(--bg-light)" clip-path="url(#projects-intro-fold)"></rect>
+      <path d="M1180,0 L1200,20 L1180,20 Z" fill="var(--border-light)" opacity="0.5"></path>
+      <line x1="1180" y1="0" x2="1200" y2="20" stroke="var(--border-light)" stroke-width="1"></line>
+    </svg>
+  </div>
+</section>
+
+<section class="projects-showcase-section" data-layout-spec="Projects-showcase">
+  <div class="projects-showcase-container">
+    <h2 class="projects-showcase-title">All builds</h2>
+    
+    <div class="projects-showcase-grid">
+      <!-- Project Card 1 -->
+      <article class="project-card">
+        <div class="project-card-image-wrapper">
+          <div class="taped-corner"></div>
+          <img data-placeholder="projects-showcase-image-1" data-context="A finished mechanical engineering project photo showing a custom-built robotic arm or precision assembly on a clean workbench, warm natural lighting, engineering tools visible in background, documentary photography style" width="600" height="400" src="/assets/site-projects-showcase-image-1.webp" alt="Completed robotic arm assembly project">
+        </div>
+        <div class="project-card-content">
+          <h3>Precision robotic arm</h3>
+          <p class="project-card-description">Built under strict weight constraints using aluminum extrusions and custom 3D-printed joints. Achieved 0.5mm positioning accuracy across a 600mm workspace.</p>
+          <p class="project-card-extra">Integrated servo control system with Arduino-based feedback loop for real-time adjustments.</p>
+          <a href="#case-studies" class="project-card-link">Open build details</a>
+        </div>
+      </article>
+
+      <!-- Project Card 2 -->
+      <article class="project-card">
+        <div class="project-card-image-wrapper">
+          <div class="taped-corner"></div>
+          <img data-placeholder="projects-showcase-image-2" data-context="An electrical engineering circuit board project with visible components, solder joints, and LED indicators, photographed from above on a neutral surface, technical documentation style" width="600" height="400" src="/assets/site-projects-showcase-image-2.webp" alt="Custom PCB with microcontroller and sensors">
+        </div>
+        <div class="project-card-content">
+          <h3>Environmental sensor array</h3>
+          <p class="project-card-description">Designed a low-power PCB for remote temperature and humidity monitoring. Operates on coin cell battery for 18+ months.</p>
+          <p class="project-card-extra">Features ESP32 wireless transmission and deep-sleep power management for extended field deployment.</p>
+          <a href="#case-studies" class="project-card-link">Open build details</a>
+        </div>
+      </article>
+
+      <!-- Project Card 3 -->
+      <article class="project-card">
+        <div class="project-card-image-wrapper">
+          <div class="taped-corner"></div>
+          <img data-placeholder="projects-showcase-image-3" data-context="A mechanical prototype device with visible gears, motors, and structural components, photographed in workshop setting with soft natural light, engineering portfolio style" width="600" height="400" src="/assets/site-projects-showcase-image-3.webp" alt="Automated sorting mechanism prototype">
+        </div>
+        <div class="project-card-content">
+          <h3>Automated sorting mechanism</h3>
+          <p class="project-card-description">Developed a compact sorting system for small parts using stepper motors and optical sensors. Processes 120 items per minute with 98% accuracy.</p>
+          <p class="project-card-extra">Modular design allows quick reconfiguration for different part geometries and sorting criteria.</p>
+          <a href="#case-studies" class="project-card-link">Open build details</a>
+        </div>
+      </article>
+
+      <!-- Project Card 4 -->
+      <article class="project-card">
+        <div class="project-card-image-wrapper">
+          <div class="taped-corner"></div>
+          <img data-placeholder="projects-showcase-image-4" data-context="A solar panel installation or renewable energy project setup, showing clean engineering work with wiring and mounting hardware, outdoor or lab setting, professional documentation photo" width="600" height="400" src="/assets/site-projects-showcase-image-4.webp" alt="Solar tracking system installation">
+        </div>
+        <div class="project-card-content">
+          <h3>Dual-axis solar tracker</h3>
+          <p class="project-card-description">Engineered a sun-tracking mount that increased panel efficiency by 32% compared to fixed installations. Used waterproof actuators and real-time positioning algorithms.</p>
+          <p class="project-card-extra">Weather-resistant enclosure withstands wind loads up to 80mph while maintaining precise alignment.</p>
+          <a href="#case-studies" class="project-card-link">Open build details</a>
+        </div>
+      </article>
+
+      <!-- Project Card 5 -->
+      <article class="project-card">
+        <div class="project-card-image-wrapper">
+          <div class="taped-corner"></div>
+          <img data-placeholder="projects-showcase-image-5" data-context="A 3D printer or CNC machine mid-operation, showing precision movement and fabrication process, workshop environment with good lighting, engineering portfolio photography" width="600" height="400" src="/assets/site-projects-showcase-image-5.webp" alt="Custom CNC router in operation">
+        </div>
+        <div class="project-card-content">
+          <h3>Desktop CNC router</h3>
+          <p class="project-card-description">Built a 300×400mm CNC router from salvaged stepper motors and linear rails. Capable of cutting wood, acrylic, and soft metals with 0.1mm repeatability.</p>
+          <p class="project-card-extra">Open-source controller runs GRBL firmware with custom post-processor for CAM workflow optimization.</p>
+          <a href="#case-studies" class="project-card-link">Open build details</a>
+        </div>
+      </article>
+
+      <!-- Project Card 6 -->
+      <article class="project-card">
+        <div class="project-card-image-wrapper">
+          <div class="taped-corner"></div>
+          <img data-placeholder="projects-showcase-image-6" data-context="An IoT device or smart home automation project with visible electronics, sensors, and clean wiring, photographed on a neutral background, technical product photography style" width="600" height="400" src="/assets/site-projects-showcase-image-6.webp" alt="Smart irrigation controller prototype">
+        </div>
+        <div class="project-card-content">
+          <h3>Smart irrigation controller</h3>
+          <p class="project-card-description">Created an IoT-enabled watering system that adjusts schedules based on soil moisture and weather forecasts. Reduced water usage by 40% in field tests.</p>
+          <p class="project-card-extra">Wireless mesh network connects up to 16 zones with cloud dashboard for remote monitoring and control.</p>
+          <a href="#case-studies" class="project-card-link">Open build details</a>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Blueprint-style dashed divider -->
+  <div class="projects-showcase-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 60" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Dashed line -->
+      <line x1="0" y1="30" x2="1200" y2="30" stroke="var(--border-dark)" stroke-width="2" stroke-dasharray="12 8"></line>
+      <!-- Measurement ticks -->
+      <line x1="100" y1="20" x2="100" y2="40" stroke="var(--border-dark)" stroke-width="1.5"></line>
+      <line x1="300" y1="20" x2="300" y2="40" stroke="var(--border-dark)" stroke-width="1.5"></line>
+      <line x1="500" y1="20" x2="500" y2="40" stroke="var(--border-dark)" stroke-width="1.5"></line>
+      <line x1="700" y1="20" x2="700" y2="40" stroke="var(--border-dark)" stroke-width="1.5"></line>
+      <line x1="900" y1="20" x2="900" y2="40" stroke="var(--border-dark)" stroke-width="1.5"></line>
+      <line x1="1100" y1="20" x2="1100" y2="40" stroke="var(--border-dark)" stroke-width="1.5"></line>
+      <!-- Small dimension markers -->
+      <circle cx="100" cy="30" r="3" fill="var(--border-dark)"></circle>
+      <circle cx="300" cy="30" r="3" fill="var(--border-dark)"></circle>
+      <circle cx="500" cy="30" r="3" fill="var(--border-dark)"></circle>
+      <circle cx="700" cy="30" r="3" fill="var(--border-dark)"></circle>
+      <circle cx="900" cy="30" r="3" fill="var(--border-dark)"></circle>
+      <circle cx="1100" cy="30" r="3" fill="var(--border-dark)"></circle>
+    </svg>
+  </div>
+</section>
+
+<section class="projects-case-studies-section" data-layout-spec="Projects-case-studies">
+  <div class="projects-case-studies-container">
+    <h2 class="projects-case-studies-title">Build logs</h2>
+    
+    <!-- Case Study 1: Instrumentation/Measurement -->
+    <article class="case-study-block">
+      <div class="case-content">
+        <h3 class="case-title">Precision Temperature Profiling System</h3>
+        <p class="case-summary">Designed and deployed a custom thermocouple array to map thermal gradients across a 12-zone industrial oven, reducing product defect rates by 18% through improved process control.</p>
+        
+        <div class="case-details">
+          <p><strong>Goal:</strong> The existing single-point measurement couldn't capture zone-to-zone variation, leading to inconsistent curing and scrap. We needed spatial resolution to identify hot spots and optimize conveyor speed.</p>
+          
+          <p><strong>Approach:</strong> Installed a 24-channel K-type thermocouple grid with a custom DAQ running at 10 Hz. Wrote Python scripts to visualize real-time heatmaps and export CSV logs for statistical analysis. Calibrated against NIST-traceable standards to ±0.5°C.</p>
+          
+          <p><strong>Validation:</strong> Ran three production batches with continuous logging. Identified a 15°C delta between zones 7 and 8. Adjusted heater PID parameters and re-validated. Final variance dropped to ±3°C across all zones, meeting spec.</p>
+          
+          <div class="build-log-toggle">
+            <button class="btn-ghost expand-btn" aria-expanded="false" aria-controls="build-log-1">
+              <i class="fas fa-plus-circle" aria-hidden="true"></i> Expand build log
+            </button>
+          </div>
+          
+          <div class="build-log-content" id="build-log-1" hidden="">
+            <p>Initial prototype used off-the-shelf terminal blocks, but vibration caused intermittent connections. Switched to screw-clamp industrial connectors with strain relief. Shielded twisted-pair cables reduced EMI noise from adjacent motor drives.</p>
+            
+            <p>Data acquisition ran on a Raspberry Pi 4 with a custom HAT board. Chose SPI interface for the ADC to minimize latency. Implemented a rolling buffer to handle occasional network dropouts without losing samples.</p>
+            
+            <div class="technical-callout">
+              <code>Sampling rate: 10 Hz per channel</code><br>
+              <code>Measurement range: 0–400°C</code><br>
+              <code>Accuracy: ±0.5°C (post-calibration)</code>
+            </div>
+            
+            <p><strong>Outcome:</strong> System ran continuously for 6 months with zero downtime. Process engineering used the data to re-tune all 12 zones. Defect rate dropped from 4.2% to 3.4%, saving ~$120K annually. Handed off maintenance docs and a web dashboard for operators.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="case-image-wrapper">
+        <div class="image-backplate"></div>
+        <img data-placeholder="projects-case-studies-image-1" data-context="Close-up photo of a custom thermocouple array installation inside an industrial oven, showing multiple K-type thermocouples mounted on a metal frame with color-coded wiring and terminal blocks, engineering portfolio context, warm industrial lighting" width="500" height="400" src="/assets/site-projects-case-studies-image-1.webp" alt="Custom thermocouple array for thermal profiling" class="case-image">
+      </div>
+    </article>
+    
+    <!-- Case Study 2: Mechanism/Fixture/Tooling -->
+    <article class="case-study-block">
+      <div class="case-content">
+        <h3 class="case-title">Modular Assembly Fixture for PCB Testing</h3>
+        <p class="case-summary">Developed a quick-change pogo-pin fixture that reduced board swap time from 45 seconds to 8 seconds, increasing test throughput by 3x and eliminating operator fatigue during high-volume runs.</p>
+        
+        <div class="case-details">
+          <p><strong>Goal:</strong> Manual alignment of test probes was slow and error-prone. Operators had to visually align 32 pogo pins to pads while holding the board steady. Misalignment caused false failures and damaged connectors.</p>
+          
+          <p><strong>Approach:</strong> Designed a laser-cut acrylic jig with indexed locating pins matching the PCB mounting holes. Pogo pins press-fit into a 3D-printed carrier plate with spring-loaded retention. Hinged clamp arm locks the board in place with one motion.</p>
+          
+          <p><strong>Validation:</strong> Tested with 50 boards across 3 product variants. Measured cycle time, contact resistance, and operator feedback. Zero misalignments. Contact resistance stayed below 50mΩ across 500+ insertions.</p>
+          
+          <div class="build-log-toggle">
+            <button class="btn-ghost expand-btn" aria-expanded="false" aria-controls="build-log-2">
+              <i class="fas fa-plus-circle" aria-hidden="true"></i> Expand build log
+            </button>
+          </div>
+          
+          <div class="build-log-content" id="build-log-2" hidden="">
+            <p>First iteration used MDF for the base, but it warped after a week in the humid production area. Switched to 6mm acrylic with aluminum standoffs. Pogo pins sourced from Mill-Max with gold-plated tips for durability.</p>
+            
+            <p>The clamp arm pivot used a simple piano hinge initially, but it flexed under clamping force. Upgraded to a stainless steel barrel hinge with a cam-lock mechanism. Added a foam gasket to prevent board flex during contact.</p>
+            
+            <div class="technical-callout">
+              <code>Alignment tolerance: ±0.2mm</code><br>
+              <code>Clamp force: 8–12 N (adjustable)</code><br>
+              <code>Cycle time: 8 sec (vs. 45 sec manual)</code>
+            </div>
+            
+            <p><strong>Outcome:</strong> Production adopted the fixture for all three board variants. Designed modular pin carriers so swapping between products takes 30 seconds (unscrew 4 bolts, swap carrier). Test throughput tripled. Operators reported significantly less hand strain. Documentation included CAD files, BOM, and assembly instructions for future variants.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="case-image-wrapper">
+        <div class="image-backplate"></div>
+        <img data-placeholder="projects-case-studies-image-2" data-context="Detailed photo of a custom PCB test fixture with pogo pins, acrylic jig, and hinged clamp mechanism, showing a circuit board loaded into the fixture, engineering workshop setting, clean technical photography" width="500" height="400" src="/assets/site-projects-case-studies-image-2.webp" alt="Modular PCB testing fixture with pogo pins" class="case-image">
+      </div>
+    </article>
+    
+    <!-- Case Study 3: System Integration/Testing -->
+    <article class="case-study-block">
+      <div class="case-content">
+        <h3 class="case-title">Automated Vibration Test Rig Integration</h3>
+        <p class="case-summary">Integrated a 6-axis IMU, data logger, and shaker controller into a unified test system for qualifying automotive sensors, cutting validation time from 2 days to 4 hours per unit.</p>
+        
+        <div class="case-details">
+          <p><strong>Goal:</strong> Manual vibration testing required multiple disconnections, re-calibrations, and spreadsheet data entry. No real-time monitoring meant failures were only discovered post-test. Needed closed-loop automation with live pass/fail criteria.</p>
+          
+          <p><strong>Approach:</strong> Connected a Bosch BMI088 IMU to an Arduino Due via SPI, logging accelerometer and gyro data at 1 kHz. Integrated with the shaker's RS-232 interface to trigger sweep profiles and emergency stops. Built a LabVIEW dashboard for live FFT plots and threshold alerts.</p>
+          
+          <p><strong>Validation:</strong> Ran 10 qualification units through the full MIL-STD-810G profile. Detected two early failures (cracked solder joints) that would have passed manual inspection. All data auto-exported to timestamped CSV files for traceability.</p>
+          
+          <div class="build-log-toggle">
+            <button class="btn-ghost expand-btn" aria-expanded="false" aria-controls="build-log-3">
+              <i class="fas fa-plus-circle" aria-hidden="true"></i> Expand build log
+            </button>
+          </div>
+          
+          <div class="build-log-content" id="build-log-3" hidden="">
+            <p>Initial serial communication had timing issues—shaker commands occasionally dropped. Added a handshake protocol and retry logic. IMU mounting used double-sided foam tape at first, but resonance shifted the frequency response. Switched to a machined aluminum bracket with M3 screws.</p>
+            
+            <p>LabVIEW code structured as a state machine: idle → configure → run → analyze → report. Added watchdog timer to auto-stop if accelerometer readings exceeded 20g (safety limit). Implemented rolling buffer to prevent memory overflow during long sweeps.</p>
+            
+            <div class="technical-callout">
+              <code>Sample rate: 1 kHz (IMU)</code><br>
+              <code>Frequency range: 10–2000 Hz</code><br>
+              <code>Pass threshold: ±5% deviation from nominal</code>
+            </div>
+            
+            <p><strong>Outcome:</strong> Test lab now runs 3 units per day instead of 1 every 2 days. Automated reporting reduced manual data entry errors to zero. Early failure detection saved rework costs on 2 production batches. Delivered a 60-page test procedure document, LabVIEW source code, and a spare IMU calibration kit.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="case-image-wrapper">
+        <div class="image-backplate"></div>
+        <img data-placeholder="projects-case-studies-image-3" data-context="Photo of an automated vibration test setup showing a shaker table with mounted sensor, IMU module, and LabVIEW interface on a monitor displaying real-time FFT plots, professional engineering lab environment" width="500" height="400" src="/assets/site-projects-case-studies-image-3.webp" alt="Automated vibration test rig with IMU and LabVIEW interface" class="case-image">
+      </div>
+    </article>
+  </div>
+  
+  <!-- Bottom Divider: Thick Terracotta Band with Screen-Printed Edge -->
+  <div class="projects-case-studies-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 60" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="rough-edge" x="-50%" y="-50%" width="200%" height="200%">
+          <feTurbulence type="fractalNoise" basefrequency="0.04" numoctaves="3" seed="5"></feTurbulence>
+          <feDisplacementMap in="SourceGraphic" scale="4"></feDisplacementMap>
+        </filter>
+      </defs>
+      <path d="M0,60 L0,20 Q50,22 100,18 T200,20 Q250,18 300,22 T400,18 Q450,20 500,18 T600,22 Q650,18 700,20 T800,18 Q850,22 900,20 T1000,18 Q1050,20 1100,22 T1200,20 L1200,60 Z" fill="#3A3733" filter="url(#rough-edge)"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="projects-cta-section" data-layout-spec="Projects-cta">
+  <div class="projects-cta-container">
+    <div class="projects-cta-content">
+      <h2>Want the same rigor on your project?</h2>
+      <p>I bring methodical problem-solving and technical depth to collaborations—whether you need a design review, prototyping support, or a full engineering partner. Let's talk about how I can help.</p>
+      <a href="/contact" class="projects-cta-btn">Start a conversation</a>
+    </div>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-top">
+      <div class="footer-column footer-about">
+        <img src="/assets/user-s-name-engineering-logo.webp" alt="[User&#39;s Name]" class="logo">
+        <p class="footer-description">Delivering innovative engineering solutions with precision and excellence.</p>
+      </div>
+      
+      <div class="footer-column footer-links">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-nav">
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column footer-contact">
+        <h3 class="footer-heading">Contact Us</h3>
+        <ul class="footer-contact-list">
+          <li><i class="fas fa-envelope"></i> <a href="mailto:[business_email]">[business_email]</a></li>
+          <li><i class="fas fa-phone"></i> <a href="tel:[business_phone]">[business_phone]</a></li>
+          <li><a href="/"><i class="fas fa-map-marker-alt"></i> <span>[business_address]</span></a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column footer-social">
+        <h3 class="footer-heading">Follow Us</h3>
+        <div class="social-links">
+          <a href="[facebook_handle]" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="[instagram_handle]" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="[whatsapp_handle]" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        <p>© 2026 [User's Name]. All rights reserved.</p>
+      </div>
+      <div class="footer-legal">
+        <a href="/privacy">Privacy Policy</a>
+        <span class="separator">|</span>
+        <a href="/terms">Terms &amp; Conditions</a>
+        <span class="separator">|</span>
+        <a href="/accessibility">Accessibility</a>
+        <span class="separator">|</span>
+        <a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+</body>
+</html>

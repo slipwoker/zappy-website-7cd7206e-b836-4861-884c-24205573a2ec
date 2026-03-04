@@ -1,0 +1,47 @@
+# Business — Generative Engine Optimization Map
+
+---
+
+## Pages
+
+### Home
+https://example.com
+Explore an engineering portfolio example blending technical prowess with indie web aesthetics. Interactive projects showcase mechanical and electrical engineering innovation.
+
+### Projects
+https://example.com/projects
+Dive into hands-on mechanical engineering portfolio projects with interactive demos. Each build tells a story of problem-solving, design iteration, and technical mastery.
+
+### About
+https://example.com/about
+Meet the engineer merging retro web design with cutting-edge technical skills. Discover the journey, philosophy, and passion driving every engineering portfolio piece.
+
+### Contact
+https://example.com/contact
+Ready to collaborate on your next engineering challenge? Connect for project inquiries, technical consultations, or just to talk shop about innovative design solutions.
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Business
+---
+
+# Additional Resources
+
+- **Sitemap**: https://example.com/sitemap.xml
+- **Robots.txt**: https://example.com/robots.txt
